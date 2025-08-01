@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:healing_apps/apps/constant/constants.dart';
+import 'package:healing_apps/apps/utils/constant/constants.dart';
 
 class WideHighlightText extends StatelessWidget {
   final String textBefore;
@@ -31,7 +31,12 @@ class WideHighlightText extends StatelessWidget {
         );
 
     final orangeStyle =
-        highlightStyle ?? defaultStyle.copyWith(color: AppColors.primaryText);
+        highlightStyle ??
+        defaultStyle.copyWith(
+          color: AppColors.primaryText,
+          fontFamily: 'Geometry',
+          fontSize: 30,
+        );
 
     // Tambahkan spasi kalau belum ada
     final fixedTextBefore = textBefore.endsWith(' ')
@@ -43,7 +48,10 @@ class WideHighlightText extends StatelessWidget {
       text: TextSpan(
         style: defaultStyle,
         children: [
-          TextSpan(text: fixedTextBefore),
+          TextSpan(
+            text: fixedTextBefore,
+            style: TextStyle(fontFamily: 'Geometry', fontSize: 30),
+          ),
           WidgetSpan(
             alignment: PlaceholderAlignment.baseline,
             baseline: TextBaseline.alphabetic,

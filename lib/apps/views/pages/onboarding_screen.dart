@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:healing_apps/apps/constant/constants.dart';
-import 'package:healing_apps/apps/widgets/wide_highlight_text.dart';
-// import 'package:flutter_svg/flutter_svg.dart';
-import 'package:healing_apps/models/slide_mode.dart';
+import 'package:go_router/go_router.dart';
+import 'package:healing_apps/apps/utils/constant/constants.dart';
+import 'package:healing_apps/apps/views/widgets/wide_highlight_text.dart';
+import 'package:healing_apps/apps/models/slide_mode.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../widgets/primary_button.dart';
 
@@ -110,6 +110,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             style: Theme.of(context).textTheme.bodyLarge
                                 ?.copyWith(
                                   fontSize: 16,
+                                  fontFamily: 'Gil',
                                   color: Colors.grey[600],
                                 ),
                           ),
@@ -140,10 +141,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               text: _currentPage == slides.length - 1 ? 'Get Started' : 'Next',
               onPressed: () {
                 if (_currentPage == slides.length - 1) {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const HomeScreen()),
-                  );
+                  // Notes: Register Page
+                  context.push('/register');
                 } else {
                   _pageController.nextPage(
                     duration: const Duration(milliseconds: 500),

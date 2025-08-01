@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:healing_apps/apps/constant/constants.dart';
+import 'package:healing_apps/apps/utils/constant/constants.dart';
 
 class SplashScreenPage extends StatefulWidget {
   const SplashScreenPage({super.key});

@@ -1,7 +1,9 @@
 // import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:healing_apps/apps/pages/onboarding_screen.dart';
-import 'package:healing_apps/apps/pages/splash_screen_page.dart';
+import 'package:healing_apps/apps/views/pages/login_page.dart';
+import 'package:healing_apps/apps/views/pages/onboarding_screen.dart';
+import 'package:healing_apps/apps/views/pages/register_page.dart';
+import 'package:healing_apps/apps/views/pages/splash_screen_page.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
@@ -9,12 +11,22 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/',
       name: 'splash',
-      builder: (context, state) => const SplashScreenPage(),
+      builder: (context, state) => SplashScreenPage(),
     ),
     GoRoute(
       path: '/onboarding',
       name: 'onboarding',
-      builder: (context, state) => const OnboardingScreen(),
+      builder: (context, state) => OnboardingScreen(),
+    ),
+    GoRoute(
+      path: '/register',
+      name: 'register',
+      builder: (context, state) => RegisterPage(),
+    ),
+    GoRoute(
+      path: '/login',
+      name: 'login',
+      builder: (context, state) => LoginPage(),
     ),
   ],
 );

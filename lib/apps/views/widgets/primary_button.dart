@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:healing_apps/apps/constant/constants.dart';
+import 'package:healing_apps/apps/utils/constant/constants.dart';
 
 class PrimaryButton extends StatelessWidget {
   final String text;

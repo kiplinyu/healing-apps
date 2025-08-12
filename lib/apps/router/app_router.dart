@@ -1,6 +1,6 @@
-// import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:healing_apps/apps/views/pages/login_page.dart';
+import 'package:healing_apps/apps/views/pages/main_page.dart';
 import 'package:healing_apps/apps/views/pages/onboarding_screen.dart';
 import 'package:healing_apps/apps/views/pages/register_page.dart';
 import 'package:healing_apps/apps/views/pages/splash_screen_page.dart';
@@ -27,6 +27,11 @@ final GoRouter appRouter = GoRouter(
       path: '/login',
       name: 'login',
       builder: (context, state) => LoginPage(),
+    ),
+    GoRoute(
+      path: '/home',
+      name: 'home',
+      builder: (context, state) => MainPage(),
     ),
   ],
 );

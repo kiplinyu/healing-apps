@@ -131,6 +131,7 @@ class RegisterPageState extends State<RegisterPage> {
                   text: 'Sign Up',
                   onPressed: () {
                     // Notes: Logic to handle registration
+                    context.go('/home');
                   },
                 ),
                 const SizedBox(height: 24),

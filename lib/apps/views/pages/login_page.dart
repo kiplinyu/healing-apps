@@ -126,6 +126,7 @@ class LoginPageState extends State<LoginPage> {
                   text: 'Sign In',
                   onPressed: () {
                     // Notes: Logic to handle registration
+                    context.go('/home');
                   },
                 ),
                 const SizedBox(height: 24),

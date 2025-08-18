@@ -20,11 +20,11 @@ class BottomNavBar extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _buildNavItem(Icons.home, "Home", 0),
-            _buildNavItem(Icons.calendar_today, "Calendar", 1),
+            _buildNavItem(Icons.home_rounded, "Home", 0),
+            _buildNavItem(Icons.calendar_month_rounded, "Calendar", 1),
             _buildCenterItem(Icons.search, 2), // khusus yang tengah
-            _buildNavItem(Icons.message, "Messages", 3),
-            _buildNavItem(Icons.person, "Profile", 4),
+            _buildNavItem(Icons.message_outlined, "Messages", 3),
+            _buildNavItem(Icons.person_outline, "Profile", 4),
           ],
         ),
       ),

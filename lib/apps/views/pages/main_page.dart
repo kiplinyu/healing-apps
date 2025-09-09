@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:healing_apps/apps/utils/constant/constants.dart';
+import 'package:healing_apps/apps/views/pages/calender_page.dart';
 import 'package:healing_apps/apps/views/pages/home_page.dart';
 import 'package:healing_apps/apps/views/widgets/bottom_navbar.dart';
 
@@ -15,7 +16,7 @@ class _MainPageState extends State<MainPage> {
 
   final List<Widget> _pages = [
     HomePage(),
-    const Center(child: Text("Calendar Page")),
+    CalendarPage(),
     const Center(child: Text("Search Page")),
     const Center(child: Text("Messages Page")),
     const Center(child: Text("Profile Page")),

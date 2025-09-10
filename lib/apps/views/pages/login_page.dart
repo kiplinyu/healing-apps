@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:healing_apps/apps/views/widgets/primary_button.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -122,8 +121,8 @@ class LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 24),
 
                 // Sign Up button
-                PrimaryButton(
-                  text: 'Sign In',
+                ElevatedButton(
+                  child: const Text('Sign In'),
                   onPressed: () {
                     // Notes: Logic to handle registration
                     context.go('/home');

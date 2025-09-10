@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:healing_apps/apps/views/widgets/primary_button.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -127,8 +126,8 @@ class RegisterPageState extends State<RegisterPage> {
                 const SizedBox(height: 24),
 
                 // Sign Up button
-                PrimaryButton(
-                  text: 'Sign Up',
+                ElevatedButton(
+                  child: const Text('Sign Up'),
                   onPressed: () {
                     // Notes: Logic to handle registration
                     context.go('/home');

@@ -1,9 +1,9 @@
 import 'package:go_router/go_router.dart';
+import 'package:healing_apps/apps/views/pages/Splash%20Screen/splash_screen.dart';
 import 'package:healing_apps/apps/views/pages/login_page.dart';
 import 'package:healing_apps/apps/views/pages/main_page.dart';
-import 'package:healing_apps/apps/views/pages/onboarding_screen.dart';
+import 'package:healing_apps/apps/views/pages/On%20Boarding/onboarding_screen.dart';
 import 'package:healing_apps/apps/views/pages/register_page.dart';
-import 'package:healing_apps/apps/views/pages/splash_screen_page.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
@@ -11,7 +11,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/',
       name: 'splash',
-      builder: (context, state) => SplashScreenPage(),
+      builder: (context, state) => SplashScreen(),
     ),
     GoRoute(
       path: '/onboarding',

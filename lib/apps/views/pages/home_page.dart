@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:healing_apps/apps/models/destination_model.dart';
 import 'package:healing_apps/apps/views/widgets/destination_card.dart';
-import 'package:healing_apps/apps/views/widgets/wide_highlight_text.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
@@ -129,18 +128,6 @@ class HomePage extends StatelessWidget {
                     fontFamily: 'SFUI',
                     fontWeight: FontWeight.w300,
                   ),
-                ),
-                WideHighlightText(
-                  textBefore: "Beautiful",
-                  highlightedText: "World!",
-                  textAfter: "",
-                  style: TextStyle(
-                    fontSize: 38,
-                    fontFamily: 'SFUI',
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                  underlineSvgAssetPath: "assets/images/Vector 2524.svg",
                 ),
               ],
             ),

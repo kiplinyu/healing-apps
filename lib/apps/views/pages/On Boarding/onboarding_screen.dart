@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:healing_apps/apps/views/pages/On%20Boarding/widget/back_circle_button_widget.dart';
-import 'package:healing_apps/apps/views/pages/On%20Boarding/widget/button_widget.dart';
+import 'package:go_router/go_router.dart';
+import 'package:healing_apps/apps/utils/constant/constants.dart';
+import 'package:healing_apps/apps/views/widgets/circle_button_widget.dart';
+import 'package:healing_apps/apps/views/widgets/button_widget.dart';
 import 'package:healing_apps/apps/views/pages/On%20Boarding/widget/onboarding_page_widget.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'data/onboarding_items.dart';
 
@@ -44,6 +47,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     ).padding.top; // tinggi notch/status bar
 
     return Scaffold(
+      backgroundColor: AppColors.background,
       body: Stack(
         children: [
           /// --- Halaman Onboarding ---
@@ -88,14 +92,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           /// --- Tombol back khusus page 2 ---
           if (currentIndex == 1)
             Positioned(
-              top: topSafe + 8, // biar gak ketiban notch
+              top: topSafe + 16,
               left: 16,
               child: AnimatedOpacity(
-                duration: const Duration(milliseconds: 300),
+                duration: const Duration(milliseconds: 1000),
                 opacity: currentIndex == 1 ? 1.0 : 0.0,
-                child: BackCircleButtonWidget(
+                child: CircleButtonWidget(
                   onPressed: _prevPage,
-                  iconColor: Colors.black,
+                  icon: PhosphorIcons.caretLeft(),
                 ),
               ),
             ),
@@ -112,7 +116,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             child: ButtonWidget(
               text: "Login",
               isPrimary: false,
-              onPressed: () {},
+              onPressed: () {
+                // Aksi tombol Login
+                context.go("/login");
+              },
             ),
           ),
           const SizedBox(width: 12),
@@ -126,7 +133,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         ],
       );
     } else if (currentIndex == onboardingItems.length - 1) {
-      return ButtonWidget(text: "Register", isPrimary: true, onPressed: () {});
+      return ButtonWidget(
+        text: "Register",
+        isPrimary: true,
+        onPressed: () {
+          context.go("/register");
+        },
+      );
     } else {
       return ButtonWidget(text: "Next", isPrimary: true, onPressed: _nextPage);
     }

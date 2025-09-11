@@ -40,6 +40,7 @@ dependencies:
   date_picker_timeline: ^1.2.7
   intl: ^0.20.2
   phosphor_flutter: ^2.1.0
+  pinput: ^5.0.2
 
 dev_dependencies:
   flutter_test:

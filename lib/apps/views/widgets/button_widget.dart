@@ -40,13 +40,13 @@ class ButtonWidget extends StatelessWidget {
               ? const TextStyle(
                   fontSize: 16,
                   fontFamily: 'SFUI',
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w600,
                   color: AppColors.whiteText,
                 )
               : const TextStyle(
                   fontSize: 16,
                   fontFamily: 'SFUI',
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w600,
                   color: AppColors.text,
                 ),
         ),

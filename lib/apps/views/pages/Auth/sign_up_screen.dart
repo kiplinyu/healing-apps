@@ -40,6 +40,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
         context,
       ).showSnackBar(SnackBar(content: Text('Signing up with $email...')));
     }
+
+    context.go('/home');
   }
 
   @override

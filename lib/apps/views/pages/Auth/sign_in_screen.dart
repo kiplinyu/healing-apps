@@ -36,6 +36,8 @@ class _SignInScreenState extends State<SignInScreen> {
         context,
       ).showSnackBar(SnackBar(content: Text('Signing in with $email...')));
     }
+
+    context.go('/home'); // Navigasi ke halaman home setelah sign in
   }
 
   @override

@@ -4,8 +4,8 @@ import 'package:healing_apps/apps/views/pages/Auth/otp_verfiy_screen.dart';
 import 'package:healing_apps/apps/views/pages/Auth/reset_password_screen.dart';
 import 'package:healing_apps/apps/views/pages/Auth/sign_in_screen.dart';
 import 'package:healing_apps/apps/views/pages/Auth/sign_up_screen.dart';
+import 'package:healing_apps/apps/views/pages/Home/main_screen.dart';
 import 'package:healing_apps/apps/views/pages/Splash%20Screen/splash_screen.dart';
-import 'package:healing_apps/apps/views/pages/main_page.dart';
 import 'package:healing_apps/apps/views/pages/On%20Boarding/onboarding_screen.dart';
 
 final GoRouter appRouter = GoRouter(
@@ -60,7 +60,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/home',
       name: 'home',
-      builder: (context, state) => MainPage(),
+      builder: (context, state) => MainScreen(),
     ),
   ],
 );

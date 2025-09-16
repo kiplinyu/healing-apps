@@ -1,31 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:healing_apps/apps/models/schedule.dart';
+import 'package:healing_apps/apps/models/cart_model.dart';
 import 'package:healing_apps/apps/utils/constant/constants.dart';
 import 'package:intl/intl.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-/// A card widget to display schedule information, updated to the new design.
-///
-/// It shows the destination image, name, date, and a prominent button to view the ticket.
+/// A card widget to display a scheduled item from the cart.
 class ScheduleCardWidget extends StatelessWidget {
-  final Schedule schedule;
+  final CartItem cartItem;
   final VoidCallback onShowTicket;
+  final VoidCallback onRemove; // Tambahan untuk menghapus item
 
   const ScheduleCardWidget({
     super.key,
-    required this.schedule,
+    required this.cartItem,
     required this.onShowTicket,
+    required this.onRemove,
   });
 
   @override
   Widget build(BuildContext context) {
-    // Format tanggal menjadi "dd MMM yyyy" (contoh: 22 Sep 2025)
-    final formattedDate = DateFormat('dd MMM yyyy').format(schedule.date);
+    // Format tanggal
+    final formattedDate = DateFormat(
+      'dd MMM yyyy',
+    ).format(cartItem.selectedDate);
+    // Ambil gambar utama dari destinasi
+    final imageUrl = cartItem.destination.mainImageUrl;
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       decoration: BoxDecoration(
-        color: AppColors.card, // Menggunakan warna dari constants
+        color: AppColors.card,
         borderRadius: BorderRadius.circular(20.0),
         boxShadow: [
           BoxShadow(
@@ -38,45 +42,38 @@ class ScheduleCardWidget extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // --- Gambar di Kiri ---
           ClipRRect(
             borderRadius: const BorderRadius.horizontal(
               left: Radius.circular(20.0),
             ),
             child: Image.network(
-              schedule.imageUrl,
-              width: 160,
-              height: 140, // Sedikit lebih tinggi untuk estetika
+              imageUrl,
+              width: 120,
+              height: 140,
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) {
                 return Container(
-                  width: 160,
+                  width: 120,
                   height: 140,
                   color: Colors.grey[200],
-                  child: const Icon(
-                    PhosphorIconsRegular.imageBroken,
-                    color: AppColors.placeholder,
-                  ),
+                  child: const Icon(PhosphorIconsRegular.imageBroken),
                 );
               },
             ),
           ),
-
-          // --- Detail di Kanan ---
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: SizedBox(
-                height: 108, // Memberi tinggi agar tombol pas di bawah
+                height: 108,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      schedule.destinationName,
+                      cartItem.destination.name,
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
-                        fontFamily: "SFUI",
                         color: AppColors.text,
                       ),
                       maxLines: 1,
@@ -96,33 +93,34 @@ class ScheduleCardWidget extends StatelessWidget {
                           style: const TextStyle(
                             fontSize: 14,
                             color: AppColors.placeholder,
-                            fontFamily: "SFUI",
                           ),
                         ),
                       ],
                     ),
-                    const Spacer(), // Mendorong tombol ke bawah
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: onShowTicket,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          foregroundColor: AppColors.whiteText,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          elevation: 0, // Desain flat
-                        ),
-                        child: const Text(
-                          'Show Ticket',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontFamily: "SFUI",
+                    const Spacer(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Tombol Hapus (opsional)
+                        TextButton(
+                          onPressed: onRemove,
+                          child: const Text(
+                            'Remove',
+                            style: TextStyle(color: Colors.red),
                           ),
                         ),
-                      ),
+                        ElevatedButton(
+                          onPressed: onShowTicket,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            foregroundColor: AppColors.whiteText,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: const Text('Show Ticket'),
+                        ),
+                      ],
                     ),
                   ],
                 ),

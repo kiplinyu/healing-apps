@@ -1,11 +1,15 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:healing_apps/apps/models/destination_model.dart';
 import 'package:healing_apps/apps/models/schedule.dart';
 import 'package:healing_apps/apps/views/pages/Auth/forgot_password_screen.dart';
 import 'package:healing_apps/apps/views/pages/Auth/otp_verfiy_screen.dart';
 import 'package:healing_apps/apps/views/pages/Auth/reset_password_screen.dart';
 import 'package:healing_apps/apps/views/pages/Auth/sign_in_screen.dart';
 import 'package:healing_apps/apps/views/pages/Auth/sign_up_screen.dart';
+import 'package:healing_apps/apps/views/pages/Destination%20Details/destination_detail_page.dart';
 import 'package:healing_apps/apps/views/pages/Main/main_screen.dart';
+import 'package:healing_apps/apps/views/pages/Main/profile/edit_profile_page.dart';
 import 'package:healing_apps/apps/views/pages/Main/schedule/ticket_details_page.dart';
 import 'package:healing_apps/apps/views/pages/Splash%20Screen/splash_screen.dart';
 import 'package:healing_apps/apps/views/pages/On%20Boarding/onboarding_screen.dart';
@@ -65,11 +69,30 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => MainScreen(),
     ),
     GoRoute(
+      path: '/edit-profile',
+      name: 'edit-profile',
+      builder: (context, state) => EditProfilePage(),
+    ),
+    GoRoute(
       path: '/ticket-details',
       builder: (context, state) {
         // Mengambil objek 'schedule' yang dikirim sebagai 'extra'
         final schedule = state.extra as Schedule;
         return TicketDetailsPage(schedule: schedule);
+      },
+    ),
+    GoRoute(
+      path: '/destination-details',
+      builder: (context, state) {
+        // Pastikan data 'extra' dikirim dan tipenya benar
+        if (state.extra is Destination) {
+          final destination = state.extra as Destination;
+          return DestinationDetailPage(destination: destination);
+        }
+        // Fallback jika data tidak ada
+        return const Scaffold(
+          body: Center(child: Text('Error: Data not found')),
+        );
       },
     ),
   ],

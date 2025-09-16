@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:healing_apps/apps/utils/constant/constants.dart';
 import 'package:healing_apps/apps/views/pages/Main/favorites/favorite_page.dart';
 import 'package:healing_apps/apps/views/pages/Main/home/home_page.dart';
+import 'package:healing_apps/apps/views/pages/Main/profile/profile_page.dart';
 import 'package:healing_apps/apps/views/pages/Main/schedule/schedule_page.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
@@ -25,7 +26,7 @@ class _MainScreenState extends State<MainScreen> {
     HomePage(),
     SchedulePage(),
     FavoritePage(),
-    PlaceholderScreen(title: 'Profile'),
+    ProfilePage(),
   ];
 
   void _onItemTapped(int index) {

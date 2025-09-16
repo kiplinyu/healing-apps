@@ -1,80 +1,80 @@
 import 'package:healing_apps/apps/models/destination_model.dart';
-import 'package:healing_apps/apps/models/schedule.dart';
 
-/// A list of dummy destination data for the Home page carousel.
+// Daftar data dummy untuk semua destinasi di aplikasi.
+// Ini adalah satu-satunya sumber kebenaran (single source of truth) untuk data destinasi.
 final List<Destination> dummyDestinations = [
   Destination(
-    id: 'dest1',
+    id: 1,
     name: 'Serenity Lake',
-    location: 'Bandung, West Java',
-    rating: 4.8,
-    imageUrl:
-        'https://images.unsplash.com/photo-1559310589-2673bfe16970?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    location: 'Bandung, Jawa Barat',
+    description:
+        'Serenity Lake adalah danau tenang yang dikelilingi hutan pinus dan udara sejuk pegunungan. Airnya jernih, memantulkan langit biru dan pepohonan di sekitarnya, menciptakan suasana damai yang menenangkan pikiran. Tempat ini cocok untuk piknik keluarga ataupun duduk menikmati panorama. ',
+    price: 35000,
+    rating: 4.9,
+    categories: ['Lake', 'Nature', 'Relax'],
+    imageUrls: [
+      'https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=2070', // Main image
+      'https://images.unsplash.com/photo-1470770841072-f978cf4d019e?q=80&w=2070',
+      'https://images.unsplash.com/photo-1505159940484-eb2b9f2588e2?q=80&w=1974',
+    ],
+    isFavorite: true, // Menandakan item ini adalah favorit
   ),
   Destination(
-    id: 'dest2',
+    id: 2,
+    name: 'Candi Borobudur',
+    location: 'Magelang, Jawa Tengah',
+    description:
+        'Candi Borobudur adalah candi Buddha terbesar di dunia dan salah satu monumen paling megah di Asia Tenggara. Dibangun pada abad ke-9, candi ini dihiasi dengan 2.672 panel relief dan 504 arca Buddha.',
+    price: 50000,
+    rating: 4.8,
+    categories: ['Historic', 'Temple'],
+    imageUrls: [
+      'https://images.unsplash.com/photo-1596484836645-134d1a6ea863?q=80&w=2070',
+    ],
+    facilities: ['Toilet', 'Food Court', 'Souvenir Shop'],
+    openingHours: '07:30 - 17:00',
+    isFavorite: false,
+  ),
+  Destination(
+    id: 3,
+    name: 'Labuan Bajo',
+    location: 'Flores, NTT',
+    description:
+        'Labuan Bajo adalah gerbang menuju Taman Nasional Komodo yang eksotis. Nikmati pemandangan perbukitan yang menakjubkan, air laut yang jernih, dan kesempatan untuk melihat komodo di habitat aslinya.',
+    price: 150000,
+    rating: 4.8,
+    categories: ['Beach', 'Island', 'Adventure'],
+    imageUrls: [
+      'https://images.unsplash.com/photo-1577968536374-47c69a5a73f5?q=80&w=1974',
+    ],
+    isFavorite: true, // Menandakan item ini adalah favorit
+  ),
+  Destination(
+    id: 4,
+    name: 'Kota Yogyakarta',
+    location: 'DIY, Indonesia',
+    description:
+        'Kota Yogyakarta, atau Jogja, adalah pusat kebudayaan dan seni di Jawa. Jelajahi Keraton, nikmati kuliner khas di Jalan Malioboro, dan rasakan keramahan warganya yang melegenda.',
+    price: 20000,
+    rating: 4.4,
+    categories: ['City', 'Culture'],
+    imageUrls: [
+      'https://images.unsplash.com/photo-1590242981845-d35276538941?q=80&w=2070',
+    ],
+    isFavorite: true, // Menandakan item ini adalah favorit
+  ),
+  Destination(
+    id: 5,
     name: 'Hidden Waterfall',
     location: 'Lombok, NTB',
+    description:
+        'Temukan air terjun tersembunyi di tengah hutan tropis Lombok. Rasakan kesegaran airnya dan nikmati ketenangan alam yang masih asri dan belum banyak terjamah.',
+    price: 25000,
     rating: 4.9,
-    imageUrl:
-        'https://images.unsplash.com/photo-1524338198850-8a2ff63aaceb?q=80&w=1915&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-  ),
-  Destination(
-    id: 'dest3',
-    name: 'Kawah Putih',
-    location: 'Ciwidey, West Java',
-    rating: 4.7,
-    imageUrl: 'Kawah Putih broken url',
-  ),
-  Destination(
-    id: 'dest4',
-    name: 'Raja Ampat',
-    location: 'West Papua',
-    rating: 5.0,
-    imageUrl:
-        'https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?auto=format&fit=crop&q=80',
-  ),
-];
-
-/// A list of dummy schedule data for the "My Schedule" page.
-final List<Schedule> dummySchedules = [
-  Schedule(
-    id: 'sched1',
-    destinationName: 'Serenity Lake',
-    date: DateTime(2025, 9, 22),
-    imageUrl:
-        'https://images.unsplash.com/photo-1559310589-2673bfe16970?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    orderId: 'ORDER-12345',
-    visitorName: 'Kiplinyu',
-    ticketCount: 1,
-  ),
-  Schedule(
-    id: 'sched2',
-    destinationName: 'Kota Yogyakarta',
-    date: DateTime(2025, 10, 13),
-    imageUrl:
-        'https://images.unsplash.com/photo-1578055648339-b67df3c862bc?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    orderId: 'ORDER-67890',
-    visitorName: 'Kiplinyu',
-    ticketCount: 2,
-  ),
-  Schedule(
-    id: 'sched3',
-    destinationName: 'Labuan Bajo',
-    date: DateTime(2025, 10, 18),
-    imageUrl: 'Labuan Bajo broken url',
-    orderId: 'ORDER-11223',
-    visitorName: 'Kiplinyu',
-    ticketCount: 1,
-  ),
-  Schedule(
-    id: 'sched4',
-    destinationName: 'Hidden Waterfall',
-    date: DateTime(2025, 11, 5),
-    imageUrl:
-        'https://images.unsplash.com/photo-1524338198850-8a2ff63aaceb?q=80&w=1915&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    orderId: 'ORDER-44556',
-    visitorName: 'Kiplinyu',
-    ticketCount: 4,
+    categories: ['Nature', 'Waterfall', 'Adventure'],
+    imageUrls: [
+      'https://images.unsplash.com/photo-1524338198850-8a2ff63aaceb?q=80&w=1915',
+    ],
+    isFavorite: false,
   ),
 ];

@@ -1,63 +1,53 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:healing_apps/apps/models/schedule.dart';
+import 'package:healing_apps/apps/providers/cart_provider.dart';
 import 'package:healing_apps/apps/utils/constant/constants.dart';
 import 'package:healing_apps/apps/utils/constant/img_assets.dart';
-import 'package:healing_apps/apps/views/pages/Main/data/dummy_data.dart';
 import 'package:healing_apps/apps/views/pages/Main/schedule/widget/schedule_card_widget.dart';
 import 'package:healing_apps/apps/views/widgets/not_found_widget.dart';
 import 'package:healing_apps/apps/views/widgets/search_input_widget.dart';
 
-class SchedulePage extends StatefulWidget {
+// 1. Ubah menjadi ConsumerStatefulWidget
+class SchedulePage extends ConsumerStatefulWidget {
   const SchedulePage({super.key});
 
   @override
-  State<SchedulePage> createState() => _SchedulePageState();
+  ConsumerState<SchedulePage> createState() => _SchedulePageState();
 }
 
-class _SchedulePageState extends State<SchedulePage> {
-  // Gunakan data dummy sebagai state awal
-  final List<Schedule> _allSchedules = dummySchedules;
-  late List<Schedule> _filteredSchedules;
-
-  @override
-  void initState() {
-    super.initState();
-    _filteredSchedules = _allSchedules;
-  }
-
-  void _filterSchedules(String query) {
-    setState(() {
-      if (query.isEmpty) {
-        _filteredSchedules = _allSchedules;
-      } else {
-        _filteredSchedules = _allSchedules
-            .where(
-              (schedule) => schedule.destinationName.toLowerCase().contains(
-                query.toLowerCase(),
-              ),
-            )
-            .toList();
-      }
-    });
-  }
+class _SchedulePageState extends ConsumerState<SchedulePage> {
+  String _searchQuery = '';
 
   @override
   Widget build(BuildContext context) {
+    // 2. Ambil data dari cartProvider
+    final allSchedules = ref.watch(cartProvider);
+
+    // 3. Logika filter langsung di dalam build method
+    final filteredSchedules = allSchedules.where((item) {
+      if (_searchQuery.isEmpty) {
+        return true;
+      }
+      return item.destination.name.toLowerCase().contains(
+        _searchQuery.toLowerCase(),
+      );
+    }).toList();
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        // Cek apakah ada jadwal untuk ditampilkan
-        child: _filteredSchedules.isEmpty
-            ? NotFoundWidget(
+        child: filteredSchedules.isEmpty && _searchQuery.isEmpty
+            // --- KONDISI JIKA JADWAL KOSONG ---
+            ? const NotFoundWidget(
                 text:
-                    "Your schedule looks empty. Let’s fill it with an unforgettable journey!",
+                    "Your schedule is empty. Let's book an unforgettable journey!",
                 imagePath: AppAssets.notFoundSchedule,
-                buttonText: "Explore",
+                buttonText: "Explore Now",
               )
+            // --- KONDISI JIKA ADA JADWAL ---
             : CustomScrollView(
                 slivers: [
-                  // --- Header ---
                   SliverPadding(
                     padding: const EdgeInsets.all(16.0),
                     sliver: SliverToBoxAdapter(
@@ -81,8 +71,12 @@ class _SchedulePageState extends State<SchedulePage> {
                           ),
                           const SizedBox(height: 24),
                           SearchInputWidget(
-                            hintText: 'Mau lihat event mana dulu?',
-                            onChanged: _filterSchedules,
+                            hintText: 'Search your booked destination...',
+                            onChanged: (query) {
+                              setState(() {
+                                _searchQuery = query;
+                              });
+                            },
                           ),
                           const SizedBox(height: 24),
                           const Text(
@@ -96,22 +90,26 @@ class _SchedulePageState extends State<SchedulePage> {
                       ),
                     ),
                   ),
-                  // --- Daftar Jadwal ---
                   SliverList(
                     delegate: SliverChildBuilderDelegate((context, index) {
-                      final schedule = _filteredSchedules[index];
+                      final cartItem = filteredSchedules[index];
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
                         child: ScheduleCardWidget(
-                          schedule: schedule,
+                          cartItem: cartItem,
                           onShowTicket: () {
-                            // Navigasi ke halaman detail tiket
-                            // Mengirim seluruh objek 'schedule' sebagai extra
-                            context.push('/ticket-details', extra: schedule);
+                            // Kirim CartItem ke halaman detail tiket
+                            context.push('/ticket-details', extra: cartItem);
+                          },
+                          onRemove: () {
+                            // Panggil method di notifier untuk menghapus
+                            ref
+                                .read(cartProvider.notifier)
+                                .removeFromCart(cartItem);
                           },
                         ),
                       );
-                    }, childCount: _filteredSchedules.length),
+                    }, childCount: filteredSchedules.length),
                   ),
                 ],
               ),

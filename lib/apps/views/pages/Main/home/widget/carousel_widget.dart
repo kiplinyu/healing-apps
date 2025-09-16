@@ -1,54 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:healing_apps/apps/models/destination_model.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:healing_apps/apps/views/pages/Main/data/dummy_data.dart';
 import 'package:healing_apps/apps/views/widgets/destination_card_widget.dart';
 
-/// A horizontal carousel widget that displays a list of destinations.
-class CarouselWidget extends StatelessWidget {
+/// A horizontal carousel widget that displays destinations using DestinationCardWidget.
+class CarouselWidget extends ConsumerWidget {
   const CarouselWidget({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // --- DATA PLACEHOLDER ---
-    // Nantinya, daftar ini akan kamu dapatkan dari API/backend.
-    final List<Destination> placeholderDestinations = [
-      const Destination(
-        id: '1',
-        imageUrl:
-            'https://images.unsplash.com/photo-1501785888041-af3ef285b470?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
-        name: 'Serenity Lake',
-        location: 'Bandung, West Java',
-        rating: 4.8,
-      ),
-      const Destination(
-        id: '2',
-        imageUrl:
-            'https://images.unsplash.com/photo-1507525428034-b723a9ce6890?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
-        name: 'Hidden Beach',
-        location: 'Lombok, NTB',
-        rating: 4.9,
-      ),
-      const Destination(
-        id: '3',
-        imageUrl:
-            'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
-        name: 'Mountain Peak',
-        location: 'Garut, West Java',
-        rating: 4.7,
-      ),
-    ];
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Ambil data langsung dari dummy_data.dart
+    final carouselItems = dummyDestinations;
 
     return SizedBox(
-      height: 350, // Beri tinggi tetap untuk area carousel
+      height: 350, // Disesuaikan dengan tinggi DestinationCardWidget
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        itemCount: placeholderDestinations.length,
+        itemCount: carouselItems.length,
         itemBuilder: (context, index) {
+          final destination = carouselItems[index];
           return Padding(
             padding: const EdgeInsets.only(right: 16.0),
-            child: DestinationCardWidget(
-              destination: placeholderDestinations[index],
-            ),
+            // Cukup berikan 'destination', karena widget sudah terhubung ke Riverpod
+            child: DestinationCardWidget(destination: destination),
           );
         },
       ),

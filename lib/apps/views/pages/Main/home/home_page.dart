@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:healing_apps/apps/providers/favorites_provider.dart';
 import 'package:healing_apps/apps/utils/constant/constants.dart';
 import 'package:healing_apps/apps/views/pages/Main/data/dummy_data.dart';
 import 'package:healing_apps/apps/views/pages/Main/home/widget/carousel_widget.dart';
@@ -9,41 +12,21 @@ import 'package:healing_apps/apps/views/widgets/circle_button_widget.dart';
 import 'package:healing_apps/apps/views/widgets/search_input_widget.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-/// The main content view for the Home tab.
-class HomePage extends StatefulWidget {
+// 1. Ubah menjadi ConsumerWidget untuk bisa 'mendengarkan' provider
+class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    // 2. Tambahkan WidgetRef
+    final List<String> categories = [
+      'All',
+      'Destination',
+      'Hotel',
+      'Food',
+      'Culture',
+    ];
 
-class _HomePageState extends State<HomePage> {
-  final List<String> _categories = [
-    'All',
-    'Destination',
-    'Hotel',
-    'Food',
-    'Culture',
-  ];
-  // ignore: unused_field
-  String _selectedCategory = 'All';
-
-  // State untuk melacak item favorit
-  final Set<String> _favoriteIds = {};
-
-  void _toggleFavorite(String destinationId) {
-    setState(() {
-      if (_favoriteIds.contains(destinationId)) {
-        _favoriteIds.remove(destinationId);
-      } else {
-        _favoriteIds.add(destinationId);
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // Struktur yang lebih rapi: Scaffold -> SafeArea -> ListView
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
@@ -57,12 +40,14 @@ class _HomePageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   UserProfileBadgeWidget(
-                    imageUrl: 'assets/images/profile.jpg',
+                    imageUrl:
+                        'assets/images/profile.jpg', // Ganti dengan path yg benar
                     name: 'kiplinyu',
-                    onTap: () {},
+                    onTap: () => context.go('/profile'), // Navigasi ke profil
                   ),
                   CircleButtonWidget(
-                    onPressed: () {},
+                    onPressed: () =>
+                        context.go('/cart'), // Navigasi ke keranjang
                     icon: PhosphorIconsRegular.shoppingCart,
                   ),
                 ],
@@ -87,7 +72,7 @@ class _HomePageState extends State<HomePage> {
                       text: 'Jalan ',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: Colors.orange,
+                        color: AppColors.primary,
                       ),
                     ),
                     TextSpan(text: 'ke Mana\nHari Ini?'),
@@ -102,7 +87,9 @@ class _HomePageState extends State<HomePage> {
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: SearchInputWidget(
                 hintText: 'Ketik tujuan perjalananmu...',
-                onChanged: (value) {},
+                onChanged: (value) {
+                  // TODO: Implement search logic
+                },
               ),
             ),
             const SizedBox(height: 24),
@@ -117,49 +104,38 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 16),
 
-            // --- Carousel Destinasi ---
+            // --- Carousel Destinasi (Sudah terhubung ke Riverpod) ---
             const CarouselWidget(),
             const SizedBox(height: 24),
 
             // --- Filter Kategori ---
             FilterBadgeWidget(
-              categories: _categories,
+              categories: categories,
               onCategorySelected: (category) {
-                setState(() {
-                  _selectedCategory = category;
-                });
-                // Tambahkan logika filter di sini
+                // TODO: Implement filter logic
               },
             ),
             const SizedBox(height: 16),
 
             // --- Daftar Kartu Kaca ---
-            // Menggunakan ListView.builder untuk menampilkan semua data dummy
             ListView.builder(
               itemCount: dummyDestinations.length,
-              shrinkWrap: true, // Penting karena berada di dalam ListView lain
-              physics:
-                  const NeverScrollableScrollPhysics(), // Mencegah scroll ganda
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
                 final destination = dummyDestinations[index];
+                // 3. Ambil notifier dan cek status favorit dari provider
+                final favoritesNotifier = ref.read(favoritesProvider.notifier);
+                final isFavorite = favoritesNotifier.isFavorite(destination.id);
+
                 return Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16.0,
                     vertical: 8.0,
                   ),
                   child: SizedBox(
-                    // width: 150,
-                    height: 350,
-                    child: GlassDestinationCardWidget(
-                      imageUrl: destination.imageUrl,
-                      name: destination.name,
-                      location: destination.location,
-                      rating: destination.rating,
-                      isFavorite: _favoriteIds.contains(destination.id),
-                      onFavoriteTap: () {
-                        _toggleFavorite(destination.id);
-                      },
-                    ),
+                    height: 325,
+                    child: GlassDestinationCardWidget(destination: destination),
                   ),
                 );
               },

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:healing_apps/apps/utils/constant/constants.dart';
-import 'package:healing_apps/apps/views/pages/Home/widget/home_page.dart';
+import 'package:healing_apps/apps/views/pages/Main/favorites/favorite_page.dart';
+import 'package:healing_apps/apps/views/pages/Main/home/home_page.dart';
+import 'package:healing_apps/apps/views/pages/Main/schedule/schedule_page.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 /// The main screen of the app that contains the BottomNavigationBar.
@@ -21,8 +23,8 @@ class _MainScreenState extends State<MainScreen> {
   // Daftar semua halaman yang akan ditampilkan
   static const List<Widget> _pages = <Widget>[
     HomePage(),
-    PlaceholderScreen(title: 'My Schedule'),
-    PlaceholderScreen(title: 'Favorites'),
+    SchedulePage(),
+    FavoritePage(),
     PlaceholderScreen(title: 'Profile'),
   ];
 

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:healing_apps/apps/utils/constant/constants.dart';
-import 'package:healing_apps/apps/views/pages/Home/data/destination.dart';
-import 'package:healing_apps/apps/views/pages/Home/widget/carousel_widget.dart';
-import 'package:healing_apps/apps/views/pages/Home/widget/filter_badge_widget.dart';
-import 'package:healing_apps/apps/views/pages/Home/widget/glass_destination_card_widget.dart';
-import 'package:healing_apps/apps/views/pages/Home/widget/user_profile_badge_widget.dart';
+import 'package:healing_apps/apps/views/pages/Main/data/dummy_data.dart';
+import 'package:healing_apps/apps/views/pages/Main/home/widget/carousel_widget.dart';
+import 'package:healing_apps/apps/views/pages/Main/home/widget/filter_badge_widget.dart';
+import 'package:healing_apps/apps/views/widgets/glass_destination_card_widget.dart';
+import 'package:healing_apps/apps/views/pages/Main/home/widget/user_profile_badge_widget.dart';
 import 'package:healing_apps/apps/views/widgets/circle_button_widget.dart';
 import 'package:healing_apps/apps/views/widgets/search_input_widget.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';

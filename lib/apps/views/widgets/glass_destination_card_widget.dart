@@ -1,12 +1,17 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:ui'; // Diperlukan untuk ImageFilter
 import 'package:flutter/material.dart';
+import 'package:healing_apps/apps/utils/constant/constants.dart';
+import 'package:healing_apps/apps/views/widgets/circle_button_widget.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 /// A card widget that displays destination info with a glassmorphism effect.
 ///
 /// This widget layers a blurred, semi-transparent container over a background
 /// image to create a frosted glass effect for the text details.
-class GlassDestinationCardWidget extends StatelessWidget {
+/// It now gracefully handles image loading errors by changing text colors.
+class GlassDestinationCardWidget extends StatefulWidget {
   final String imageUrl;
   final String name;
   final String location;
@@ -25,22 +30,57 @@ class GlassDestinationCardWidget extends StatelessWidget {
   });
 
   @override
+  State<GlassDestinationCardWidget> createState() =>
+      _GlassDestinationCardWidgetState();
+}
+
+class _GlassDestinationCardWidgetState
+    extends State<GlassDestinationCardWidget> {
+  bool _imageHasError = false;
+
+  @override
   Widget build(BuildContext context) {
+    final Color textColor = _imageHasError
+        ? AppColors.text
+        : AppColors.whiteText;
+    final Color secondaryTextColor = _imageHasError
+        ? AppColors.placeholder
+        : Colors.white.withOpacity(0.9);
+    final Color glassColor = _imageHasError
+        ? Colors.white.withOpacity(0.7)
+        : Colors.white.withOpacity(0.25);
+
     return Card(
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
       elevation: 4,
-      shadowColor: Colors.black.withOpacity(0.2),
+      shadowColor: AppColors.contrast.withOpacity(0.2),
       child: Stack(
         children: [
           // --- 1. Gambar Latar Belakang ---
           Positioned.fill(
             child: Image.network(
-              imageUrl,
+              widget.imageUrl,
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) {
-                return const Center(
-                  child: Icon(PhosphorIconsRegular.imageBroken),
+                // Gunakan postFrameCallback untuk update state secara aman
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted && !_imageHasError) {
+                    setState(() {
+                      _imageHasError = true;
+                    });
+                  }
+                });
+                // Tampilkan UI alternatif jika gambar gagal dimuat
+                return Container(
+                  color: Colors.grey.shade200, // Background abu-abu
+                  child: const Center(
+                    child: Icon(
+                      PhosphorIconsRegular.imageBroken,
+                      color: AppColors.text, // Ikon warna gelap
+                      size: 40,
+                    ),
+                  ),
                 );
               },
             ),
@@ -50,17 +90,11 @@ class GlassDestinationCardWidget extends StatelessWidget {
           Positioned(
             top: 16,
             right: 16,
-            child: CircleAvatar(
-              backgroundColor: Colors.white.withOpacity(0.9),
-              child: IconButton(
-                icon: Icon(
-                  isFavorite
-                      ? PhosphorIconsFill.heart
-                      : PhosphorIconsRegular.heart,
-                  color: isFavorite ? Colors.red : Colors.black54,
-                ),
-                onPressed: onFavoriteTap,
-              ),
+            child: CircleButtonWidget(
+              onPressed: widget.onFavoriteTap,
+              icon: widget.isFavorite
+                  ? PhosphorIconsFill.heart
+                  : PhosphorIconsRegular.heart,
             ),
           ),
 
@@ -72,24 +106,26 @@ class GlassDestinationCardWidget extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(16.0),
               child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
+                // Nonaktifkan blur jika gambar error agar tidak aneh
+                filter: _imageHasError
+                    ? ImageFilter.blur(sigmaX: 0, sigmaY: 0)
+                    : ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
                 child: Container(
                   padding: const EdgeInsets.all(16.0),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.25),
+                    color: glassColor, // Gunakan warna dinamis
                     borderRadius: BorderRadius.circular(16.0),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Baris Nama dan Rating
                       Row(
                         children: [
                           Expanded(
                             child: Text(
-                              name,
-                              style: const TextStyle(
-                                color: Colors.white,
+                              widget.name,
+                              style: TextStyle(
+                                color: textColor, // Warna dinamis
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -98,16 +134,16 @@ class GlassDestinationCardWidget extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(width: 8),
-                          const Icon(
-                            PhosphorIconsFill.star,
-                            color: Colors.amber,
+                          Icon(
+                            PhosphorIconsRegular.star,
+                            color: textColor, // Warna dinamis
                             size: 16,
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            rating.toString(),
-                            style: const TextStyle(
-                              color: Colors.white,
+                            widget.rating.toString(),
+                            style: TextStyle(
+                              color: textColor, // Warna dinamis
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
@@ -115,11 +151,10 @@ class GlassDestinationCardWidget extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 4),
-                      // Lokasi
                       Text(
-                        location,
+                        widget.location,
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.9),
+                          color: secondaryTextColor, // Warna dinamis
                           fontSize: 14,
                         ),
                         maxLines: 1,

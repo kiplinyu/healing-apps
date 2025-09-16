@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:healing_apps/apps/utils/constant/constants.dart';
+import 'package:healing_apps/apps/utils/constant/img_assets.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -28,12 +29,7 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              'assets/images/logohealingtour_travel-removebg-preview 1.png',
-              width: 280,
-            ),
-          ],
+          children: [Image.asset(AppAssets.splash, width: 280)],
         ),
       ),
     );

@@ -1,10 +1,12 @@
 import 'package:go_router/go_router.dart';
+import 'package:healing_apps/apps/models/schedule.dart';
 import 'package:healing_apps/apps/views/pages/Auth/forgot_password_screen.dart';
 import 'package:healing_apps/apps/views/pages/Auth/otp_verfiy_screen.dart';
 import 'package:healing_apps/apps/views/pages/Auth/reset_password_screen.dart';
 import 'package:healing_apps/apps/views/pages/Auth/sign_in_screen.dart';
 import 'package:healing_apps/apps/views/pages/Auth/sign_up_screen.dart';
-import 'package:healing_apps/apps/views/pages/Home/main_screen.dart';
+import 'package:healing_apps/apps/views/pages/Main/main_screen.dart';
+import 'package:healing_apps/apps/views/pages/Main/schedule/ticket_details_page.dart';
 import 'package:healing_apps/apps/views/pages/Splash%20Screen/splash_screen.dart';
 import 'package:healing_apps/apps/views/pages/On%20Boarding/onboarding_screen.dart';
 
@@ -61,6 +63,14 @@ final GoRouter appRouter = GoRouter(
       path: '/home',
       name: 'home',
       builder: (context, state) => MainScreen(),
+    ),
+    GoRoute(
+      path: '/ticket-details',
+      builder: (context, state) {
+        // Mengambil objek 'schedule' yang dikirim sebagai 'extra'
+        final schedule = state.extra as Schedule;
+        return TicketDetailsPage(schedule: schedule);
+      },
     ),
   ],
 );

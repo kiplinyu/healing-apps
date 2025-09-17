@@ -7,12 +7,15 @@ import 'package:healing_apps/apps/views/pages/Auth/otp_verfiy_screen.dart';
 import 'package:healing_apps/apps/views/pages/Auth/reset_password_screen.dart';
 import 'package:healing_apps/apps/views/pages/Auth/sign_in_screen.dart';
 import 'package:healing_apps/apps/views/pages/Auth/sign_up_screen.dart';
+import 'package:healing_apps/apps/views/pages/Checkout/payment_page.dart';
 import 'package:healing_apps/apps/views/pages/Destination%20Details/destination_detail_page.dart';
 import 'package:healing_apps/apps/views/pages/Main/main_screen.dart';
 import 'package:healing_apps/apps/views/pages/Main/profile/edit_profile_page.dart';
 import 'package:healing_apps/apps/views/pages/Main/schedule/ticket_details_page.dart';
 import 'package:healing_apps/apps/views/pages/Splash%20Screen/splash_screen.dart';
 import 'package:healing_apps/apps/views/pages/On%20Boarding/onboarding_screen.dart';
+import 'package:healing_apps/apps/views/pages/cart/cart_page.dart';
+import 'package:healing_apps/apps/views/widgets/payment_callback_widget.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
@@ -92,6 +95,38 @@ final GoRouter appRouter = GoRouter(
         // Fallback jika data tidak ada
         return const Scaffold(
           body: Center(child: Text('Error: Data not found')),
+        );
+      },
+    ),
+    // Di file konfigurasi GoRouter Anda
+    GoRoute(
+      path: '/cart',
+      builder: (context, state) {
+        // Tidak perlu passing data, langsung return halamannya
+        return const CartPage();
+      },
+    ),
+    GoRoute(
+      path: '/payment',
+      builder: (context, state) {
+        // Tidak perlu passing data, langsung return halamannya
+        return const PaymentPage();
+      },
+    ),
+    GoRoute(
+      path: '/payment-status',
+      builder: (context, state) {
+        // Ambil data yang dikirim sebagai query parameters
+        final isSuccess = state.uri.queryParameters['success'] == 'true';
+        final amount = double.tryParse(
+          state.uri.queryParameters['amount'] ?? '0',
+        );
+        final trxId = state.uri.queryParameters['trxId'] ?? 'N/A';
+
+        return PaymentCallbackWidget(
+          isSuccess: isSuccess,
+          amount: amount ?? 0,
+          transactionId: trxId,
         );
       },
     ),

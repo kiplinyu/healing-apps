@@ -46,8 +46,7 @@ class HomePage extends ConsumerWidget {
                     onTap: () => context.go('/profile'), // Navigasi ke profil
                   ),
                   CircleButtonWidget(
-                    onPressed: () =>
-                        context.go('/cart'), // Navigasi ke keranjang
+                    onPressed: () => context.push('/cart'),
                     icon: PhosphorIconsRegular.shoppingCart,
                   ),
                 ],
@@ -124,9 +123,6 @@ class HomePage extends ConsumerWidget {
               physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
                 final destination = dummyDestinations[index];
-                // 3. Ambil notifier dan cek status favorit dari provider
-                final favoritesNotifier = ref.read(favoritesProvider.notifier);
-                final isFavorite = favoritesNotifier.isFavorite(destination.id);
 
                 return Padding(
                   padding: const EdgeInsets.symmetric(

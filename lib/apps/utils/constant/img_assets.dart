@@ -11,6 +11,8 @@ class AppAssets {
       'assets/images/NotFound/not-found_schedule.png';
   static const String notFoundFavorite =
       'assets/images/NotFound/not-found_favorites.png';
+  static const String notFoundCart =
+      'assets/images/NotFound/not-found_cart.png';
 
   // Onboarding images
   static const String onboarding1 = 'assets/images/Onboarding/Onboarding-1.jpg';

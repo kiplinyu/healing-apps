@@ -1,9 +1,12 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:healing_apps/apps/services/backend_controller_service.dart';
 import 'package:healing_apps/apps/utils/constant/constants.dart';
 import 'package:healing_apps/apps/views/pages/Auth/widget/input_widget.dart';
 import 'package:healing_apps/apps/views/pages/Auth/widget/password_input_widget.dart';
 import 'package:healing_apps/apps/views/widgets/button_widget.dart';
+import 'package:logger/logger.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -15,6 +18,7 @@ class SignInScreen extends StatefulWidget {
 class _SignInScreenState extends State<SignInScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final BackendControllerService _backendService = BackendControllerService();
 
   @override
   void dispose() {
@@ -23,21 +27,28 @@ class _SignInScreenState extends State<SignInScreen> {
     super.dispose();
   }
 
-  void _signIn() {
+  void _signIn() async{
     // Tambahkan logika sign in di sini
     final email = _emailController.text;
     final password = _passwordController.text;
-    // ignore: avoid_print
-    print('Attempting to sign in with Email: $email, Password: $password');
 
-    // Pengecekan 'mounted' penting untuk menghindari error jika widget sudah ter-dispose
+    Response? result = await _backendService.login(email, password);
+    
+    final message = result?.data['message'];
+    void toHome() => context.go('/home');
     if (mounted) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Signing in with $email...')));
+      if(result != null && result.statusCode == 200){
+        
+        ScaffoldMessenger.of(context,).showSnackBar(const SnackBar(content: Text('Login successful! Redirecting...')));
+        Future.delayed(const Duration(seconds: 2), toHome);
+      } else {
+        // send Popup message
+        ScaffoldMessenger.of(context,).showSnackBar(SnackBar(content: Text(message ?? 'Login failed. Please check your credentials.')));
+      }
     }
+    
 
-    context.go('/home'); // Navigasi ke halaman home setelah sign in
+    //context.go('/home'); // Navigasi ke halaman home setelah sign in
   }
 
   @override

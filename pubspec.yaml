@@ -45,6 +45,8 @@ dependencies:
   table_calendar: ^3.2.0
   dio: ^5.9.0
   webview_flutter: ^4.13.0
+  shared_preferences: ^2.5.3
+  logger: ^2.6.1
 
 dev_dependencies:
   flutter_test:

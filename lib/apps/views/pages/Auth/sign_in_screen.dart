@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:healing_apps/apps/services/backend_controller_service.dart';
 import 'package:healing_apps/apps/utils/constant/constants.dart';
@@ -8,14 +9,14 @@ import 'package:healing_apps/apps/views/pages/Auth/widget/password_input_widget.
 import 'package:healing_apps/apps/views/widgets/button_widget.dart';
 import 'package:logger/logger.dart';
 
-class SignInScreen extends StatefulWidget {
+class SignInScreen extends ConsumerStatefulWidget {
   const SignInScreen({super.key});
 
   @override
-  State<SignInScreen> createState() => _SignInScreenState();
+  ConsumerState<SignInScreen> createState() => _SignInScreenState();
 }
 
-class _SignInScreenState extends State<SignInScreen> {
+class _SignInScreenState extends ConsumerState<SignInScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final BackendControllerService _backendService = BackendControllerService();
@@ -31,14 +32,16 @@ class _SignInScreenState extends State<SignInScreen> {
     // Tambahkan logika sign in di sini
     final email = _emailController.text;
     final password = _passwordController.text;
-
+    
+    Logger().d('Attempting to sign in with email: $email');
     Response? result = await _backendService.login(email, password);
+    
     
     final message = result?.data['message'];
     void toHome() => context.go('/home');
+    
     if (mounted) {
       if(result != null && result.statusCode == 200){
-        
         ScaffoldMessenger.of(context,).showSnackBar(const SnackBar(content: Text('Login successful! Redirecting...')));
         Future.delayed(const Duration(seconds: 2), toHome);
       } else {
@@ -95,7 +98,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 const SizedBox(height: 48),
 
                 // --- Input Email ---
-                InputWidget(controller: _emailController, placeholder: 'Email'),
+                InputWidget(controller: _emailController, placeholder: 'Email or Username'),
                 const SizedBox(height: 16),
 
                 // --- Input Password ---

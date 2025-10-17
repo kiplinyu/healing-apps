@@ -16,12 +16,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _passwordRController = TextEditingController();
 
   @override
   void dispose() {
     _usernameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _passwordRController.dispose();
     super.dispose();
   }
 
@@ -30,6 +32,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final username = _usernameController.text;
     final email = _emailController.text;
     final password = _passwordController.text;
+    final repeat = _passwordRController.text;
+    
+    if(password != repeat){
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Password and Repeat Password do not match')));
+      }
+      return;
+    }
     // ignore: avoid_print
     print(
       'Attempting to sign up with Username: $username, Email: $email, Password: $password',
@@ -97,6 +109,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 PasswordInputWidget(
                   controller: _passwordController,
                   placeholder: 'Password',
+                ),
+                const SizedBox(height: 12),
+                
+                // --- Input Password ---
+                PasswordInputWidget(
+                  controller: _passwordRController,
+                  placeholder: 'Repeat Password',
                 ),
                 const SizedBox(height: 12),
 

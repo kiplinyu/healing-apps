@@ -1,4 +1,6 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:healing_apps/apps/services/backend_controller_service.dart';
@@ -17,40 +19,45 @@ class SplashScreen extends ConsumerStatefulWidget
 
 class _SplashScreenState extends ConsumerState<SplashScreen>
 {
+
     @override
-    //NOTES: Uncomment the following code to enable automatic navigation after a delay.
-    @override
-    void initState()
+    void initState() 
     {
+        // TODO: implement initState
         super.initState();
-        
-        Future.microtask(() async {
-            final BackendControllerService backendService = BackendControllerService();
-            
-            void goHome() => context.go('/home');
-            void goSignIn() => context.go('/onboarding');
-           
-            try{
-                final user = await backendService.getUser();
-                if(user != null)
-                {
-                    Future.delayed(const Duration(seconds: 3), goHome);
-                }
-                else
-                {
-                    Future.delayed(const Duration(seconds: 3), goSignIn);
-                }
-            } catch(e)
-            {
-                Logger().e('Error fetching BASE_URL from .env: $e');
-            }
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+            _afterSplash();
         });
-        
+    }
+
+    void _afterSplash() async
+    {
+        final BackendControllerService backendService = BackendControllerService();
+
+        void goHome() => context.go('/home');
+        void goSignIn() => context.go('/onboarding');
+        try
+        {
+            final user = await backendService.getUser();
+            if (user != null)
+            {
+                Future.delayed(const Duration(seconds: 3), goHome);
+            }
+            else
+            {
+                Future.delayed(const Duration(seconds: 3), goSignIn);
+            }
+        }
+        on DioException catch(e)
+        {
+            Logger().e('Error fetching BASE_URL from .env: $e');
+        }
     }
 
     @override
-    Widget build(BuildContext context) 
+    Widget build(BuildContext context)
     {
+
         return Scaffold(
             backgroundColor: AppColors.backgroundSplash,
             body: Center(

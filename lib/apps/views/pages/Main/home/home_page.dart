@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:healing_apps/apps/providers/user_provider.dart';
+import 'package:healing_apps/apps/providers/destination_provider.dart';
 import 'package:healing_apps/apps/utils/constant/constants.dart';
-import 'package:healing_apps/apps/views/pages/Main/data/dummy_data.dart';
 import 'package:healing_apps/apps/views/pages/Main/home/widget/carousel_widget.dart';
 import 'package:healing_apps/apps/views/pages/Main/home/widget/filter_badge_widget.dart';
 import 'package:healing_apps/apps/views/widgets/glass_destination_card_widget.dart';
@@ -16,6 +16,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 class HomePage extends ConsumerWidget
 {
     const HomePage({super.key});
+    
 
     @override
     Widget build(BuildContext context, WidgetRef ref) 
@@ -30,6 +31,7 @@ class HomePage extends ConsumerWidget
         ];
 
         final user = ref.watch(getUserProvider).value;
+        final destinations = ref.watch(getDestinationsProvider).value ?? [];
         return Scaffold(
             backgroundColor: AppColors.background,
             body: SafeArea(
@@ -46,7 +48,7 @@ class HomePage extends ConsumerWidget
                                         imageUrl:
                                         'assets/images/profile.jpg', // Ganti dengan path yg benar
                                         name: user?.name ?? 'null',
-                                        onTap: () => context.go('/profile'), // Navigasi ke profil
+                                        onTap: () => context.push('/edit-profile'), // Navigasi ke profil
                                     ),
                                     CircleButtonWidget(
                                         onPressed: () => context.push('/cart'),
@@ -123,12 +125,12 @@ class HomePage extends ConsumerWidget
 
                         // --- Daftar Kartu Kaca ---
                         ListView.builder(
-                            itemCount: dummyDestinations.length,
+                            itemCount: destinations.length,
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             itemBuilder: (context, index)
                             {
-                                final destination = dummyDestinations[index];
+                                final destination = destinations[index];
 
                                 return Padding(
                                     padding: const EdgeInsets.symmetric(

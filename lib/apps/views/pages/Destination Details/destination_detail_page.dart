@@ -43,7 +43,7 @@ class _DestinationDetailPageState extends ConsumerState<DestinationDetailPage> {
     final destination = widget.destination; // Akses destination dari widget
     final isFavorite = ref.watch(
       favoritesProvider.select(
-        (favs) => favs.any((d) => d.id == destination.id),
+        (favs) => favs.any((d) => d.uuid == destination.uuid),
       ),
     );
     final favoritesNotifier = ref.read(favoritesProvider.notifier);

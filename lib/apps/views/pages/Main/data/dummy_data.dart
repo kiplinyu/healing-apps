@@ -4,7 +4,7 @@ import 'package:healing_apps/apps/models/destination_model.dart';
 // Ini adalah satu-satunya sumber kebenaran (single source of truth) untuk data destinasi.
 final List<Destination> dummyDestinations = [
   Destination(
-    id: 1,
+    uuid: "1",
     name: 'Serenity Lake',
     location: 'Bandung, Jawa Barat',
     description:
@@ -20,7 +20,7 @@ final List<Destination> dummyDestinations = [
     isFavorite: true, // Menandakan item ini adalah favorit
   ),
   Destination(
-    id: 2,
+    uuid: "2",
     name: 'Candi Borobudur',
     location: 'Magelang, Jawa Tengah',
     description:
@@ -36,7 +36,7 @@ final List<Destination> dummyDestinations = [
     isFavorite: false,
   ),
   Destination(
-    id: 3,
+    uuid: "3",
     name: 'Labuan Bajo',
     location: 'Flores, NTT',
     description:
@@ -50,7 +50,7 @@ final List<Destination> dummyDestinations = [
     isFavorite: true, // Menandakan item ini adalah favorit
   ),
   Destination(
-    id: 4,
+    uuid: "4",
     name: 'Kota Yogyakarta',
     location: 'DIY, Indonesia',
     description:
@@ -64,7 +64,7 @@ final List<Destination> dummyDestinations = [
     isFavorite: true, // Menandakan item ini adalah favorit
   ),
   Destination(
-    id: 5,
+    uuid: "5",
     name: 'Hidden Waterfall',
     location: 'Lombok, NTB',
     description:

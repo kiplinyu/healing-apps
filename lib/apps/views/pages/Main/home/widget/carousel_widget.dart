@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:healing_apps/apps/views/pages/Main/data/dummy_data.dart';
 import 'package:healing_apps/apps/views/widgets/destination_card_widget.dart';
+
+import '../../../../../providers/destination_provider.dart';
 
 /// A horizontal carousel widget that displays destinations using DestinationCardWidget.
 class CarouselWidget extends ConsumerWidget {
@@ -10,7 +11,7 @@ class CarouselWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // Ambil data langsung dari dummy_data.dart
-    final carouselItems = dummyDestinations;
+    final carouselItems = ref.watch(getDestinationsProvider).value ?? [];
 
     return SizedBox(
       height: 350, // Disesuaikan dengan tinggi DestinationCardWidget

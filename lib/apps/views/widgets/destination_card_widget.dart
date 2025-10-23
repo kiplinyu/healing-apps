@@ -19,7 +19,7 @@ class DestinationCardWidget extends ConsumerWidget {
     // 1. Ambil state dan notifier dari provider
     final favoriteList = ref.watch(favoritesProvider);
     // 2. Tentukan status favorit berdasarkan daftar yang dipantau.
-    final isFavorite = favoriteList.any((d) => d.id == destination.id);
+    final isFavorite = favoriteList.any((d) => d.uuid == destination.uuid);
 
     // Gunakan ref.read di dalam callback/fungsi, bukan untuk membangun UI.
     final favoritesNotifier = ref.read(favoritesProvider.notifier);

@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:healing_apps/apps/models/destination_model.dart';
 import 'package:healing_apps/apps/models/user_model.dart';
 import 'package:healing_apps/apps/services/api_token_service.dart';
 import 'package:logger/logger.dart';
@@ -22,8 +23,8 @@ class BackendControllerService
         {
             final String? tokenString = (await apiTokenService.getToken())?.token;
             final Options options = Options(
-                sendTimeout: Duration(seconds: 5),
-                receiveTimeout: Duration(seconds: 5),
+                sendTimeout: Duration(seconds: 3),
+                receiveTimeout: Duration(seconds: 3),
                 headers:
                 {
                     'Authorization': 'Bearer $tokenString',
@@ -35,15 +36,15 @@ class BackendControllerService
             switch (type)
             {
                 case 0:
-                    return await _dio.get(url,data: data, options: options);
+                    return await _dio.get(url, data: data, options: options);
                 case 1:
-                    return await _dio.post(url,data: data, options: options);
+                    return await _dio.post(url, data: data, options: options);
                 case 2:
                     return await _dio.put(url, data: data, options: options);
                 case 3:
                     return await _dio.delete(url, data: data, options: options);
                 default:
-                    return null;
+                return null;
             }
         }
         on DioException catch (e)
@@ -69,9 +70,6 @@ class BackendControllerService
         final userModel = UserModel.fromJson(response?.data['data']);
         return userModel;
     }
-    
-    
-    
 
     Future<Response?> getData(String url) async
     {
@@ -97,7 +95,7 @@ class BackendControllerService
     {
         try
         {
-            final response = await fetch('$baseUrl/login', POST, data: 
+            final response = await fetch('$baseUrl/login', POST, data:
                 {
                     'email': email,
                     'password': password,
@@ -117,7 +115,7 @@ class BackendControllerService
                     throw Exception('Invalid login response: Token is empty');
                 }
             }
-            
+
             //save user
             await getUser();
             return response;
@@ -136,16 +134,21 @@ class BackendControllerService
     {
         apiTokenService.clearToken();
         Response? response;
-        try {
+        try
+        {
             response = await fetch("$baseUrl/logout", POST);
-        } on DioException catch (e){
+        }
+        on DioException catch (e)
+        {
             return e.response;
         }
         return response;
     }
 
-    Future<Response?> resetPassword(String current, String password, String confirmPassword) async{
-        try {
+    Future<Response?> resetPassword(String current, String password, String confirmPassword) async
+    {
+        try
+        {
             final response = await fetch('$baseUrl/password', PUT, data:
                 {
                     'current_password': current,
@@ -154,28 +157,67 @@ class BackendControllerService
                 }
             );
             return response;
-        } on DioException catch (e){
+        }
+        on DioException catch (e)
+        {
             return e.response;
-        } catch (e){
+        }
+        catch (e)
+        {
             return null;
         }
     }
 
-  Future<Response?> updateUserProfile(UserModel updatedUser) async {
-        try{
-            final response = await fetch('$baseUrl/profile/edit', PUT, data: {
-                'name': updatedUser.name,
-                'username': updatedUser.username,
-                'email': updatedUser.email,
-                'personal_data': {
-                    'phone_number': updatedUser.phone,
+    Future<Response?> updateUserProfile(UserModel updatedUser) async
+    {
+        try
+        {
+            final response = await fetch('$baseUrl/profile/edit', PUT, data: 
+                {
+                    'name': updatedUser.name,
+                    'username': updatedUser.username,
+                    'email': updatedUser.email,
+                    'personal_data':
+                    {
+                        'phone_number': updatedUser.phone,
+                    }
                 }
-            });
+            );
             return response;
-        } on DioException catch (e){
+        }
+        on DioException catch (e)
+        {
             return e.response;
-        } catch (e){
+        }
+        catch (e)
+        {
             return null;
         }
-  }
+    }
+    
+    // Destination fetching
+    Future<List<Destination>?> getDestinations() async
+    {
+        try{
+            final response = await fetch('$baseUrl/destinations', GET);
+            if (response?.statusCode != 200)
+            {
+                return null;
+            }
+            List<dynamic> data = response?.data['data'] ?? [];
+            List<Destination> destinations = data.map(
+                    (item) => Destination.fromJson(item)
+            ).toList();
+            return destinations;
+        }
+        on DioException catch (e) {
+            Logger().e(
+                'Dio error while fetching destinations: ${e.response?.data ??
+                    e.message}');
+            return null;
+        }catch (e) {
+            Logger().e('Unexpected error while fetching destinations: $e');
+            return null;
+        }
+    }
 }

@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:healing_apps/apps/services/backend_controller_service.dart';
 import 'package:logger/logger.dart';
 import 'package:midtrans_sdk/midtrans_sdk.dart';
 
@@ -17,27 +19,29 @@ class PaymentWebView extends ConsumerStatefulWidget
 class _PaymentWebViewState extends ConsumerState<PaymentWebView>
 {
     MidtransSDK? _midtrans;
+    String? _paymentToken ;
     bool _isLoading = true;
+    
+    
 
     @override
     Widget build(BuildContext context)
     {
         // final cartItems = ref.watch(cartProvider);
-        final String token = 'fc7f82a7-f710-4360-bd33-7954b9cf53ba';
+        
+        if(!_isLoading && _midtrans != null && _paymentToken != null)
+        {
+            return Scaffold(
+                appBar: AppBar(title: Text('Pembayaran')),
+                body: _centeredChild(
+                    const Text("Memproses pembayaran..."),
+                ),
+            );
+        }
         return Scaffold(
             appBar: AppBar(title: Text('Pembayaran')),
             body: _centeredChild(
-                _isLoading
-                    ? const CircularProgressIndicator()
-                    : ElevatedButton(
-                        onPressed: ()
-                        {
-                            _midtrans?.startPaymentUiFlow(
-                                token: token,
-                            );
-                        },
-                        child: const Text('Bayar Sekarang'),
-                    ),
+                const CircularProgressIndicator(),
             ),
         );
     }
@@ -53,6 +57,19 @@ class _PaymentWebViewState extends ConsumerState<PaymentWebView>
     void initState() 
     {
         super.initState();
+        Future.microtask(()
+            {
+                final BackendControllerService backendService = BackendControllerService();
+                setState(() async {
+                    _isLoading = false;
+                    _paymentToken = await backendService.getToken();
+                    Logger().d("Token pembayaran diterima: $_paymentToken");
+                    _midtrans!.startPaymentUiFlow(
+                        token: _paymentToken,
+                    );
+                });
+            }
+        );
         WidgetsBinding.instance.addPostFrameCallback((_) => _initSDK());
     }
 
@@ -74,6 +91,7 @@ class _PaymentWebViewState extends ConsumerState<PaymentWebView>
         _midtrans = await MidtransSDK.init(config: config);
         _midtrans!.setTransactionFinishedCallback((result)
             {
+                Logger().d("Hasil transaksi: ${result.status}");
                 _paymentCallback(result.status.toString());
             }
         );
@@ -96,12 +114,14 @@ class _PaymentWebViewState extends ConsumerState<PaymentWebView>
     
     void _paymentCallback(String result)
     {
+        bool _isSussess = false;
         switch(result)
         {
             case "success":
                 ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text("Pembayaran Berhasil")),
                 );
+                _isSussess = true;
                 break;
             case "pending":
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -118,6 +138,11 @@ class _PaymentWebViewState extends ConsumerState<PaymentWebView>
                     const SnackBar(content: Text("Pembayaran Dibatalkan")),
                 );
                 break;
+            case "invalid":
+                ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Pembayaran Tidak Valid")),
+                );
+                break;
             default:
                 ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text("Status Pembayaran Tidak Diketahui")),
@@ -129,7 +154,17 @@ class _PaymentWebViewState extends ConsumerState<PaymentWebView>
         {            
             if(mounted)
             {
-                Navigator.of(context).pop();
+                if(_isSussess){
+                    //context.go(
+                    //   '/payment-status?success=true&amount=120000&trxId=INV-123456',
+                    // );
+                    
+                    context.go(
+                        '/home'
+                    );
+                }else{
+                    Navigator.of(context).pop();
+                }
             }
         });
     }

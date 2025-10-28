@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:healing_apps/apps/models/cart_model.dart';
 import 'package:healing_apps/apps/models/destination_model.dart';
 import 'package:healing_apps/apps/models/user_model.dart';
 import 'package:healing_apps/apps/services/api_token_service.dart';
@@ -172,7 +173,7 @@ class BackendControllerService
     {
         try
         {
-            final response = await fetch('$baseUrl/profile/edit', PUT, data: 
+            final response = await fetch('$baseUrl/profile/edit', PUT, data:
                 {
                     'name': updatedUser.name,
                     'username': updatedUser.username,
@@ -194,11 +195,12 @@ class BackendControllerService
             return null;
         }
     }
-    
+
     // Destination fetching
     Future<List<Destination>?> getDestinations() async
     {
-        try{
+        try
+        {
             final response = await fetch('$baseUrl/destinations', GET);
             if (response?.statusCode != 200)
             {
@@ -206,18 +208,99 @@ class BackendControllerService
             }
             List<dynamic> data = response?.data['data'] ?? [];
             List<Destination> destinations = data.map(
-                    (item) => Destination.fromJson(item)
+                (item) => Destination.fromJson(item)
             ).toList();
             return destinations;
         }
-        on DioException catch (e) {
+        on DioException catch (e)
+        {
             Logger().e(
                 'Dio error while fetching destinations: ${e.response?.data ??
                     e.message}');
             return null;
-        }catch (e) {
+        }
+        catch (e)
+        {
             Logger().e('Unexpected error while fetching destinations: $e');
             return null;
         }
     }
+
+    void processBookings(CartItem item) async
+    {
+        try
+        {
+            await fetch(
+                '$baseUrl/bookings',
+                POST,
+                data: 
+                {
+                    "destination_uuid": item.destination.uuid,
+                    "quantity": item.quantity,
+                    "brand": "STIGE",
+                    "category": "Travel",
+                    "merchant_name": "STIGE",
+                    "date": "${item.selectedDate.year}-${item.selectedDate.month}-${item.selectedDate.day}"
+                }
+            );
+        }
+        on DioException catch (e)
+        {
+            Logger().e('Dio error while processing bookings: ${e.response?.data ?? e.message}');
+        }
+        catch (e)
+        {
+            Logger().e('Unexpected error while processing bookings: $e');
+        }
+    }
+
+    Future<List<CartItem>> getCartItems() async
+    {
+        try{
+
+            final response = await fetch('$baseUrl/bookings/unpaid', GET);
+            if (response?.statusCode != 200)
+            {
+                return [];
+            }
+            List<dynamic> data = response?.data['data'] ?? [];
+            
+            List<CartItem> cartItems = data.map(
+                (item) => CartItem(
+                    destination: Destination.fromJson(item['destination']),
+                    selectedDate: DateTime.parse(item['date']),
+                    quantity: item['quantity'],
+                )
+            ).toList();
+            return cartItems;
+        }on DioException catch (e)
+        {
+            Logger().e('Dio error while fetching cart items: ${e.response?.data ?? e.message}');
+            return [];
+        }
+        catch (e)
+        {
+            Logger().e('Unexpected error while fetching cart items: $e');
+            return [];
+        }
+    }
+
+  Future<String> getToken() async {
+        try {
+            final response = await fetch('$baseUrl/checkouts', POST);
+            if (response?.statusCode == 200) {
+                Logger().i('Payment initiated successfully: ${response?.data}');
+            } else {
+                Logger().e('Failed to initiate payment: ${response?.data}');
+            }
+            
+            return response?.data['data']['payment_token'] ?? '';
+        } on DioException catch (e) {
+            Logger().e('Dio error while initiating payment: ${e.response?.data ?? e.message}');
+            return '';
+        } catch (e) {
+            Logger().e('Unexpected error while initiating payment: $e');
+            return '';
+        }
+  }
 }

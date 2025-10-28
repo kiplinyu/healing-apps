@@ -1,25 +1,66 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:healing_apps/apps/models/cart_model.dart';
 import 'package:healing_apps/apps/providers/cart_provider.dart';
+import 'package:healing_apps/apps/services/backend_controller_service.dart';
 import 'package:healing_apps/apps/utils/constant/constants.dart';
 import 'package:intl/intl.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-class PaymentPage extends ConsumerWidget
+class PaymentPage extends ConsumerStatefulWidget
 {
     const PaymentPage({super.key});
 
     @override
-    Widget build(BuildContext context, WidgetRef ref)
-    {
-        // Ambil data dari cart provider untuk kalkulasi
-        final cartNotifier = ref.read(cartProvider.notifier);
-        final subtotal = cartNotifier.totalCost;
-        final serviceFee = 15000.0; // Contoh service fee
-        final totalPayment = subtotal + serviceFee;
-        final totalItems = ref.watch(cartProvider).length;
+    ConsumerState<PaymentPage> createState() => _PaymentPageState();
+}
 
+class _PaymentPageState extends ConsumerState<PaymentPage>
+{
+
+    bool _isLoading = true;
+
+    late List<CartItem> cartItems;
+    late double subtotal;
+    late double serviceFee = 15000; // Contoh service fee
+    late double totalPayment;
+    late int totalItems;
+
+    @override
+    void initState() 
+    {
+        Future.microtask(() async
+            {
+                final backendService = BackendControllerService();
+                final items = await backendService.getCartItems();
+                setState(()
+                    {
+                        cartItems = items;
+                        subtotal = cartItems.fold(0, (sum, item) => sum + (item.destination.price * item.quantity));
+                        totalItems = cartItems.fold(0, (sum, item) => sum + item.quantity);
+                        totalPayment = subtotal + serviceFee;
+                        _isLoading = false;
+                    }
+                );
+            }
+        );
+        super.initState();
+    }
+    
+    
+    @override
+    Widget build(BuildContext context)
+    {
+        if (_isLoading)
+        {
+            return Scaffold(
+                backgroundColor: AppColors.background,
+                body: Center(
+                    child: CircularProgressIndicator(),
+                ),
+            );
+        }
         return Scaffold(
             backgroundColor: AppColors.background,
             appBar: AppBar(
@@ -35,7 +76,7 @@ class PaymentPage extends ConsumerWidget
                         PhosphorIconsRegular.caretLeft,
                         color: AppColors.text,
                     ),
-                    onPressed: () => Navigator.of(context).pop(),
+                    onPressed: () => context.go('/cart'),
                 ),
             ),
             body: ListView(
@@ -43,28 +84,10 @@ class PaymentPage extends ConsumerWidget
                 children: [
                     _buildSummaryCard(totalItems, subtotal, serviceFee, totalPayment),
                     const SizedBox(height: 24),
-                    // const Text(
-                    //     'Choose Payment Method',
-                    //     style: TextStyle(
-                    //         fontSize: 18,
-                    //         fontWeight: FontWeight.bold,
-                    //         color: AppColors.text,
-                    //     ),
-                    // ),
-                    // const SizedBox(height: 16),
 
                     // gw ubah jadi via midtrans aja di ganti jadi button Checkout ke Midtrans
                     _buildCheckoutButton(context, totalPayment),
-
-                    // _buildPaymentMethodTile(
-                    //   icon: PhosphorIconsFill.wallet,
-                    //   title: 'E-Wallet (GoPay, OVO, etc.)',
-                    //   onTap: () {
-                    //     // TODO: Implement Midtrans Webview for E-Wallet
-                    //   },
-                    // ),
-                    // const SizedBox(height: 12),
-                    // _buildVirtualAccountAccordion(),
+                    
                 ],
             ),
         );
@@ -95,11 +118,13 @@ class PaymentPage extends ConsumerWidget
                     fontWeight: FontWeight.bold,
                 ),
             ),
-            onPressed: ()
-            {
-              context.push('/midtrans-payment');
-            }
+            onPressed: () => _checkoutPayment(),
         );
+    }
+    
+    void _checkoutPayment() async
+    {
+        context.push('/midtrans-payment');
     }
 
     /// Widget untuk kartu ringkasan pembayaran

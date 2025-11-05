@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:healing_apps/apps/models/cart_model.dart';
@@ -6,6 +7,8 @@ import 'package:healing_apps/apps/providers/cart_provider.dart';
 import 'package:healing_apps/apps/services/backend_controller_service.dart';
 import 'package:healing_apps/apps/utils/constant/constants.dart';
 import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
+import 'package:midtrans_sdk/midtrans_sdk.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class PaymentPage extends ConsumerStatefulWidget
@@ -22,10 +25,13 @@ class _PaymentPageState extends ConsumerState<PaymentPage>
     bool _isLoading = true;
 
     late List<CartItem> cartItems;
-    late double subtotal;
+    late double subtotal = 0;
     late double serviceFee = 15000; // Contoh service fee
-    late double totalPayment;
-    late int totalItems;
+    late double totalPayment = 0;
+    late int totalItems = 0;
+
+    MidtransSDK? _midtrans;
+    String? _paymentToken ;
 
     @override
     void initState() 
@@ -34,17 +40,22 @@ class _PaymentPageState extends ConsumerState<PaymentPage>
             {
                 final backendService = BackendControllerService();
                 final items = await backendService.getCartItems();
+                _paymentToken = await backendService.getToken();
                 setState(()
                     {
                         cartItems = items;
                         subtotal = cartItems.fold(0, (sum, item) => sum + (item.destination.price * item.quantity));
                         totalItems = cartItems.fold(0, (sum, item) => sum + item.quantity);
                         totalPayment = subtotal + serviceFee;
+
+                        
+                        Logger().d("Token pembayaran diterima: $_paymentToken");
                         _isLoading = false;
                     }
                 );
             }
         );
+        WidgetsBinding.instance.addPostFrameCallback((_) => _initSDK());
         super.initState();
     }
     
@@ -87,7 +98,6 @@ class _PaymentPageState extends ConsumerState<PaymentPage>
 
                     // gw ubah jadi via midtrans aja di ganti jadi button Checkout ke Midtrans
                     _buildCheckoutButton(context, totalPayment),
-                    
                 ],
             ),
         );
@@ -124,7 +134,9 @@ class _PaymentPageState extends ConsumerState<PaymentPage>
     
     void _checkoutPayment() async
     {
-        context.push('/midtrans-payment');
+        _midtrans!.startPaymentUiFlow(
+            token: _paymentToken,
+        );
     }
 
     /// Widget untuk kartu ringkasan pembayaran
@@ -199,6 +211,112 @@ class _PaymentPageState extends ConsumerState<PaymentPage>
                 ),
             ],
         );
+    }
+
+    void _initSDK() async
+    {
+        _isLoading = true;
+        Logger().d("Inisialisasi Midtrans SDK...");
+        final colorScheme = Theme.of(context).colorScheme; // aman di sini
+        var config = MidtransConfig(
+            clientKey: dotenv.env['MIDTRANS_CLIENT_KEY'] ?? '',
+            merchantBaseUrl: "https://example.com/",
+            enableLog: false,
+            colorTheme: ColorTheme(
+                colorPrimary: colorScheme.primary,
+                colorPrimaryDark: colorScheme.primary,
+                colorSecondary: colorScheme.secondary,
+            ),
+        );
+        _midtrans = await MidtransSDK.init(config: config);
+        _midtrans!.setTransactionFinishedCallback((result)
+        {
+            Logger().d("Hasil transaksi: ${result.status}");
+            _paymentCallback(result.status.toString());
+        }
+        );
+
+        if (_midtrans == null)
+        {
+            Logger().e("Gagal inisialisasi Midtrans SDK");
+            ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Gagal inisialisasi Midtrans SDK")),
+            );
+        }
+        else
+        {
+            setState(() {
+                _isLoading = false;
+            });
+            Logger().d("Midtrans SDK siap digunakan");
+        }
+    }
+
+    void _paymentCallback(String result)
+    {
+        bool _isSussess = false;
+        switch(result)
+        {
+            case "success":
+                ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Pembayaran Berhasil")),
+                );
+                _isSussess = true;
+                break;
+            case "pending":
+                ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Pembayaran Tertunda")),
+                );
+                break;
+            case "failed":
+                ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Pembayaran Gagal")),
+                );
+                break;
+            case "canceled":
+                ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Pembayaran Dibatalkan")),
+                );
+                break;
+            case "invalid":
+                ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Pembayaran Tidak Valid")),
+                );
+                break;
+            case 'settlement':
+                ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Pembayaran Ini sudah selesai dari pihak Midtrans")),
+                );
+                _isSussess = true;
+                break;
+            default:
+                // popup center
+                ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Status Pembayaran Tidak Diketahui")),
+                );
+                break;
+        }
+
+        // wait for 2 seconds before popping
+        Future.delayed(const Duration(seconds: 2), ()
+        {
+            if(mounted)
+            {
+                if(_isSussess){
+                    context.go(
+                        '/home'
+                    );
+                }
+            }
+        });
+    }
+
+
+    @override
+    void dispose()
+    {
+        _midtrans?.removeTransactionFinishedCallback();
+        super.dispose();
     }
 
 }

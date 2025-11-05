@@ -7,7 +7,6 @@ import 'package:healing_apps/apps/views/pages/Auth/otp_verfiy_screen.dart';
 import 'package:healing_apps/apps/views/pages/Auth/reset_password_screen.dart';
 import 'package:healing_apps/apps/views/pages/Auth/sign_in_screen.dart';
 import 'package:healing_apps/apps/views/pages/Auth/sign_up_screen.dart';
-import 'package:healing_apps/apps/views/pages/Checkout/midtrans_page.dart';
 import 'package:healing_apps/apps/views/pages/Checkout/payment_page.dart';
 import 'package:healing_apps/apps/views/pages/Destination%20Details/destination_detail_page.dart';
 import 'package:healing_apps/apps/views/pages/Main/main_screen.dart';
@@ -114,13 +113,15 @@ final GoRouter appRouter = GoRouter(
         return const PaymentPage();
       },
     ),
-    GoRoute(
-      path: '/midtrans-payment',
-      builder: (context, state) {
-        // Tidak perlu passing data, langsung return halamannya
-        return PaymentWebView();
-      },
-    ),
+    
+    // this route is deprecated
+    // GoRoute(
+    //   path: '/midtrans-payment',
+    //   builder: (context, state) {
+    //     // Tidak perlu passing data, langsung return halamannya
+    //     return PaymentWebView();
+    //   },
+    // ),
     GoRoute(
       path: '/payment-status',
       builder: (context, state) {

@@ -105,31 +105,57 @@ class _PaymentPageState extends ConsumerState<PaymentPage>
 
     Widget _buildCheckoutButton(BuildContext context, double totalPayment)
     {
-        final currencyFormatter = NumberFormat.currency(
-            locale: 'id_ID',
-            symbol: 'Rp. ',
-            decimalDigits: 0,
-        );
-
-        return ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+        
+        // i think we dont need this anymore
+        // final currencyFormatter = NumberFormat.currency(
+        //     locale: 'id_ID',
+        //     symbol: 'Rp. ',
+        //     decimalDigits: 0,
+        // );
+        
+        
+        // this condition to check if midtrans is still loading or payment token is null
+        // then show loading button
+        if(_isLoading || _midtrans == null || _paymentToken == null)
+        {
+            return ElevatedButton(
+                onPressed: null,
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary.withOpacity(0.6),
+                    foregroundColor: AppColors.whiteText,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 40,
+                        vertical: 16,
+                    ),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                    ),
                 ),
-            ),
-            child: Text(
-                'Checkout Now (${currencyFormatter.format(totalPayment)})',
-                // text color putih
-                style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                child: const CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.whiteText),
                 ),
-            ),
-            onPressed: () => _checkoutPayment(),
-        );
+            );
+        }else {
+            return ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                    ),
+                ),
+                child: Text(
+                    'Checkout',
+                    // text color putih
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                    ),
+                ),
+                onPressed: () => _checkoutPayment(),
+            );
+        }
     }
     
     void _checkoutPayment() async

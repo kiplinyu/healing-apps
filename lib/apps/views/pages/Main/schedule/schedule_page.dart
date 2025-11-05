@@ -16,6 +16,7 @@ class SchedulePage extends ConsumerStatefulWidget {
   ConsumerState<SchedulePage> createState() => _SchedulePageState();
 }
 
+//TODO: onGo to ticket details page with cart item data from URL
 class _SchedulePageState extends ConsumerState<SchedulePage> {
   String _searchQuery = '';
 
@@ -41,7 +42,7 @@ class _SchedulePageState extends ConsumerState<SchedulePage> {
             // --- KONDISI JIKA JADWAL KOSONG ---
             ? const NotFoundWidget(
                 text:
-                    "Your schedule is empty. Let's book an unforgettable journey!",
+                    "Your schedule is empty. Let's book an unforgettable journey! ON GOING COKK",
                 imagePath: AppAssets.notFoundSchedule,
                 buttonText: "Explore Now",
               )

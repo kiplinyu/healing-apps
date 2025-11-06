@@ -218,12 +218,24 @@ class _BookingBottomSheetWidgetState
     }
 
     /// Fungsi untuk menambahkan item ke keranjang
-    void _addToCart()
+    void _addToCart() async
     {
 
         
         // 1. Buat objek CartItem baru
+        final BackendControllerService backendService = BackendControllerService();
+        final user = await backendService.getUser();
+        if(user == null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                    content: Text('User not found! Please log in again.'),
+                    backgroundColor: Colors.red,
+                ),
+            );
+            return;
+        }
         final newItem = CartItem(
+            userModel: user!,
             destination: widget.destination,
             selectedDate: _selectedDay,
             quantity: _ticketQuantity,

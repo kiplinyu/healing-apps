@@ -63,10 +63,10 @@ class TicketWidget extends StatelessWidget {
     // Siapkan data untuk QR Code dengan format tanggal yang benar
     final qrDataMap = {
       'destinationName': schedule.destinationName,
-      'orderId': 'ORDER-12345',
+      'orderId': schedule.orderId,
       'entryDate': schedule.date.toIso8601String(), // Format standar untuk JSON
-      'visitor': 'Kiplinyu',
-      'ticketCount': '1x',
+      'visitor': schedule.visitorName,
+      'ticketCount': schedule.ticketCount,
     };
     final qrDataString = jsonEncode(qrDataMap);
 
@@ -128,7 +128,7 @@ class TicketWidget extends StatelessWidget {
                       children: [
                         _buildDetailItem(
                           'Order ID',
-                          'ORDER-12345',
+                          schedule.orderId,
                           isChip: true,
                         ),
                         _buildDetailItem(
@@ -140,10 +140,10 @@ class TicketWidget extends StatelessWidget {
                     const SizedBox(height: 16),
                     Row(
                       children: [
-                        _buildDetailItem('Visitor', 'Kiplinyu'),
+                        _buildDetailItem('Visitor', schedule.visitorName),
                         _buildDetailItem(
                           'Ticket',
-                          '1x',
+                          '${schedule.ticketCount}x',
                           icon: PhosphorIconsRegular.ticket,
                         ),
                       ],

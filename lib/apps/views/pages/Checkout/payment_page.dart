@@ -280,14 +280,14 @@ class _PaymentPageState extends ConsumerState<PaymentPage>
 
     void _paymentCallback(String result)
     {
-        bool _isSussess = false;
+        bool isSussess = false;
         switch(result)
         {
             case "success":
                 ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text("Pembayaran Berhasil")),
                 );
-                _isSussess = true;
+                isSussess = true;
                 break;
             case "pending":
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -313,7 +313,7 @@ class _PaymentPageState extends ConsumerState<PaymentPage>
                 ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text("Pembayaran Ini sudah selesai dari pihak Midtrans")),
                 );
-                _isSussess = true;
+                isSussess = true;
                 break;
             default:
                 // popup center
@@ -328,7 +328,7 @@ class _PaymentPageState extends ConsumerState<PaymentPage>
         {
             if(mounted)
             {
-                if(_isSussess){
+                if(isSussess){
                     context.go(
                         '/home'
                     );

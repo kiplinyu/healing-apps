@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:healing_apps/apps/models/cart_model.dart';
 import 'package:healing_apps/apps/providers/cart_provider.dart';
+import 'package:healing_apps/apps/services/backend_controller_service.dart';
 import 'package:healing_apps/apps/utils/constant/constants.dart';
 import 'package:healing_apps/apps/utils/constant/img_assets.dart';
 import 'package:healing_apps/apps/views/pages/Main/schedule/widget/schedule_card_widget.dart';
@@ -19,26 +21,51 @@ class SchedulePage extends ConsumerStatefulWidget {
 //TODO: onGo to ticket details page with cart item data from URL
 class _SchedulePageState extends ConsumerState<SchedulePage> {
   String _searchQuery = '';
+  
+  late List<CartItem> items;
+  bool _isLoading = true;
+  
+  
+  @override
+  void initState() {
+    Future.microtask(() async {
+      final backendService = BackendControllerService();
+      final result = await backendService.getScheduledItems();
+      setState(() {
+        items = result;
+        _isLoading = false;
+      });
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     // 2. Ambil data dari cartProvider
-    final allSchedules = ref.watch(cartProvider);
 
     // 3. Logika filter langsung di dalam build method
-    final filteredSchedules = allSchedules.where((item) {
-      if (_searchQuery.isEmpty) {
-        return true;
-      }
-      return item.destination.name.toLowerCase().contains(
-        _searchQuery.toLowerCase(),
+    // final items = items.where((item) {
+    //   if (_searchQuery.isEmpty) {
+    //     return true;
+    //   }
+    //   return item.destination.name.toLowerCase().contains(
+    //     _searchQuery.toLowerCase(),
+    //   );
+    // }).toList();
+    
+    
+    if(_isLoading){
+      return const Scaffold(
+        backgroundColor: AppColors.background,
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
       );
-    }).toList();
-
+    }
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: filteredSchedules.isEmpty && _searchQuery.isEmpty
+        child: items.isEmpty && _searchQuery.isEmpty
             // --- KONDISI JIKA JADWAL KOSONG ---
             ? const NotFoundWidget(
                 text:
@@ -93,7 +120,7 @@ class _SchedulePageState extends ConsumerState<SchedulePage> {
                   ),
                   SliverList(
                     delegate: SliverChildBuilderDelegate((context, index) {
-                      final cartItem = filteredSchedules[index];
+                      final cartItem = items[index];
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
                         child: ScheduleCardWidget(
@@ -110,7 +137,7 @@ class _SchedulePageState extends ConsumerState<SchedulePage> {
                           },
                         ),
                       );
-                    }, childCount: filteredSchedules.length),
+                    }, childCount: items.length),
                   ),
                 ],
               ),

@@ -265,8 +265,11 @@ class BackendControllerService
             }
             List<dynamic> data = response?.data['data'] ?? [];
             
+            final user = await getUser();
             List<CartItem> cartItems = data.map(
                 (item) => CartItem(
+                    userModel: user!,
+                    order_id: item['order_id'],
                     destination: Destination.fromJson(item['destination']),
                     selectedDate: DateTime.parse(item['date']),
                     quantity: item['quantity'],
@@ -301,6 +304,35 @@ class BackendControllerService
         } catch (e) {
             Logger().e('Unexpected error while initiating payment: $e');
             return '';
+        }
+  }
+
+  Future<List<CartItem>> getScheduledItems() async {
+        try {
+            final response = await fetch('$baseUrl/bookings/scheduled', GET);
+            if (response?.statusCode != 200) {
+                return [];
+            }
+            List<dynamic> data = response?.data['data'] ?? [];
+            
+            final user = await getUser();
+            List<CartItem> cartItems = data.map(
+                    (item) =>
+                    CartItem(
+                        userModel: user!,
+                        order_id: item['order_id'],
+                        destination: Destination.fromJson(item['destination']),
+                        selectedDate: DateTime.parse(item['date']),
+                        quantity: item['quantity'],
+                    )
+            ).toList();
+            return cartItems;
+        } on DioException catch (e) {
+            Logger().e('Dio error while fetching scheduled items: ${e.response?.data ?? e.message}');
+            return [];
+        }catch (e) {
+            Logger().e('Unexpected error while fetching scheduled items: $e');
+            return [];
         }
   }
 }

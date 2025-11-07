@@ -7,11 +7,11 @@ class FavoritesNotifier extends StateNotifier<List<Destination>> {
   // Method untuk menambah/menghapus favorit
   void toggleFavorite(Destination destination) {
     // Cek apakah destinasi sudah ada di daftar favorit
-    final isAlreadyFavorite = state.any((d) => d.id == destination.id);
+    final isAlreadyFavorite = state.any((d) => d.uuid == destination.uuid);
 
     if (isAlreadyFavorite) {
       // Jika sudah ada, hapus dari daftar
-      state = state.where((d) => d.id != destination.id).toList();
+      state = state.where((d) => d.uuid != destination.uuid).toList();
     } else {
       // Jika belum ada, tambahkan ke daftar
       state = [...state, destination];
@@ -21,7 +21,7 @@ class FavoritesNotifier extends StateNotifier<List<Destination>> {
   // Helper untuk mengecek status favorit dari UI
   bool isFavorite(int destinationId) {
     // ignore: unrelated_type_equality_checks
-    return state.any((d) => d.id == destinationId);
+    return state.any((d) => d.uuid == destinationId);
   }
 }
 

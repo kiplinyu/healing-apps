@@ -23,7 +23,7 @@ class PaymentService {
         'item_details': cartItems
             .map(
               (item) => {
-                'id': item.destination.id,
+                'id': item.destination.uuid,
                 'price': item.destination.price,
                 'quantity': item.quantity,
                 'name': item.destination.name,

@@ -32,7 +32,7 @@ class _GlassDestinationCardWidgetState
     // --- Ambil state dan notifier dari Riverpod ---
     final favoriteList = ref.watch(favoritesProvider);
     // 2. Tentukan status favorit berdasarkan daftar yang dipantau.
-    final isFavorite = favoriteList.any((d) => d.id == widget.destination.id);
+    final isFavorite = favoriteList.any((d) => d.uuid == widget.destination.uuid);
 
     // Gunakan ref.read di dalam callback/fungsi, bukan untuk membangun UI.
     final favoritesNotifier = ref.read(favoritesProvider.notifier);

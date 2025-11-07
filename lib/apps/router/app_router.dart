@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:healing_apps/apps/models/cart_model.dart';
 import 'package:healing_apps/apps/models/destination_model.dart';
 import 'package:healing_apps/apps/models/schedule.dart';
 import 'package:healing_apps/apps/views/pages/Auth/forgot_password_screen.dart';
@@ -80,7 +81,17 @@ final GoRouter appRouter = GoRouter(
       path: '/ticket-details',
       builder: (context, state) {
         // Mengambil objek 'schedule' yang dikirim sebagai 'extra'
-        final schedule = state.extra as Schedule;
+        
+        final item = state.extra as CartItem;
+        final schedule = Schedule(
+          id: item.destination.uuid,
+          destinationName: item.destination.name,
+          imageUrl: item.destination.imageUrls[0],
+          date: item.selectedDate,
+          orderId: item.order_id ?? "ERROR", // Contoh data statis
+          visitorName: item.userModel.name, // Contoh data statis
+          ticketCount: item.quantity,
+        );
         return TicketDetailsPage(schedule: schedule);
       },
     ),
@@ -113,6 +124,15 @@ final GoRouter appRouter = GoRouter(
         return const PaymentPage();
       },
     ),
+    
+    // this route is deprecated
+    // GoRoute(
+    //   path: '/midtrans-payment',
+    //   builder: (context, state) {
+    //     // Tidak perlu passing data, langsung return halamannya
+    //     return PaymentWebView();
+    //   },
+    // ),
     GoRoute(
       path: '/payment-status',
       builder: (context, state) {
